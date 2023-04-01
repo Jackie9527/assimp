@@ -285,13 +285,13 @@ ELSEIF(MSVC)
   ELSE() # msvc
     ADD_COMPILE_OPTIONS(/MP /bigobj /W4 /WX)
   ENDIF()
-  
+
   # disable "elements of array '' will be default initialized" warning on MSVC2013
   IF(MSVC12)
-    ADD_COMPILE_OPTIONS(/wd4351)	
+    ADD_COMPILE_OPTIONS(/wd4351)
   ENDIF()
   # supress warning for double to float conversion if Double precission is activated
-  ADD_COMPILE_OPTIONS(/wd4244) 
+  ADD_COMPILE_OPTIONS(/wd4244)
   SET(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /D_DEBUG /Zi /Od")
   SET(CMAKE_CXX_FLAGS_RELEASE "${CMAKE_CXX_FLAGS_RELEASE}")
   SET(CMAKE_SHARED_LINKER_FLAGS_RELEASE "${CMAKE_SHARED_LINKER_FLAGS_RELEASE} /DEBUG:FULL /PDBALTPATH:%_PDB% /OPT:REF /OPT:ICF")
@@ -637,6 +637,16 @@ ELSE()
       # and https://github.com/google/draco/issues/673
       IF(MSVC)
         set(DRACO_CXX_FLAGS "/W0")
+        if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" ) # clang-cl
+          list(APPEND DRACO_CXX_FLAGS
+            "-Wno-bool-compare"
+            "-Wno-comment"
+            "-Wno-maybe-uninitialized"
+            "-Wno-sign-compare"
+            "-Wno-unused-local-typedefs"
+            "-Wno-ignored-qualifiers"
+          )
+        endif()
       ELSE()
         list(APPEND DRACO_CXX_FLAGS
           "-Wno-bool-compare"
